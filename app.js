@@ -43,9 +43,10 @@
         cap.remove();
         img.alt = '豬仔照片 ' + (i + 1);
         Store.getImage(imgId).then(function (dataURL) {
-          if (dataURL) { img.src = dataURL; img.hidden = false; node.querySelector('.doodle') && node.querySelector('.doodle').remove(); }
+          if (dataURL) { img.src = dataURL; img.hidden = false; var d = frame.querySelector('.doodle'); if (d) d.remove(); }
         });
-        // doodle stays as fallback until image resolves; remove once shown above
+        // doodle stays as fallback until the image resolves. Query `frame`, not `node`:
+        // the fragment is empty once frame has been appended to the page.
       } else {
         cap.textContent = '豬仔照片 ' + (i + 1) + '（後台可更換）';
       }
