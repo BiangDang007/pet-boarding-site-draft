@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>豬仔仔幼兒園｜Demo 示意版</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="blob" style="width:220px;height:220px;background:var(--coral);top:-60px;left:60px;"></div>
+<div class="blob" style="width:180px;height:180px;background:var(--mint);bottom:120px;right:-60px;"></div>
+
+<div id="toast-region" class="toast-region" aria-live="polite" role="status"></div>
+
+<div id="banner" class="top-banner">
+  <span>Demo 示意版｜非官方網站。資料暫存在您這台裝置的瀏覽器；正式版會存在雲端，換手機、換電腦都看得到。</span>
+  <button type="button" id="bannerClose" aria-label="關閉提示">✕</button>
+</div>
+<script>(function(){try{if(sessionStorage.getItem('zz-banner-dismissed')==='1'){var b=document.getElementById('banner');if(b)b.style.display='none';}}catch(e){}})();</script>
+
+<template id="tpl-hero-0">
+  <div class="photo-frame pink">
+    <div class="tape t1"></div>
+    <img hidden alt="">
+    <svg class="doodle" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="9" fill="none" stroke="#f06a52" stroke-width="2.5"/><g stroke="#f06a52" stroke-width="2.5" stroke-linecap="round"><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.5 10.5l4.2 4.2M33.3 33.3l4.2 4.2M37.5 10.5l-4.2 4.2M14.7 33.3l-4.2 4.2"/></g></svg>
+    <div class="cap"></div>
+  </div>
+</template>
+<template id="tpl-hero-1">
+  <div class="photo-frame yellow">
+    <div class="tape t2"></div>
+    <img hidden alt="">
+    <svg class="doodle" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l4.8 10.2L40 15.7l-8 8.1L34 35 24 29.6 14 35l2-11.2-8-8.1 11.2-1.5Z" fill="#ffcb47" stroke="#4a3626" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="cap"></div>
+  </div>
+</template>
+<template id="tpl-hero-2">
+  <div class="photo-frame mint">
+    <div class="tape t3"></div>
+    <img hidden alt="">
+    <svg class="doodle" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40S8 29 8 18c0-6 4.5-10 10-10 3 0 5.5 1.6 6 4 .5-2.4 3-4 6-4 5.5 0 10 4 10 10 0 11-16 22-16 22Z" fill="#8fdcc0" stroke="#4a3626" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="cap"></div>
+  </div>
+</template>
+<template id="tpl-squiggle">
+  <svg class="squiggle" viewBox="0 0 140 10" aria-hidden="true"><path d="M2 6 C 20 2, 35 10, 50 5 S 80 2, 95 6 S 120 9, 138 4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+</template>
+<template id="tpl-folder-icon">
+  <svg class="folder-thumb" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="15" rx="2" fill="rgba(255,255,255,.55)" stroke="#5c3d12" stroke-width="1.4"/><circle cx="7.5" cy="9.5" r="1.8" fill="#5c3d12"/><path d="M4 17l4.5-4.5 3.5 3.5 2.5-2.5 6 4" fill="none" stroke="#5c3d12" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+</template>
+
+<header class="site-header">
+  <div class="brand-row">
+    <div>
+      <div class="brand-name hand"><span id="brandTitleText">豬仔仔幼兒園</span>
+        <svg class="brand-underline" viewBox="0 0 220 14" aria-hidden="true"><path d="M4 8 C 40 2, 70 13, 110 6 S 170 2, 216 9" fill="none" stroke="#f06a52" stroke-width="4" stroke-linecap="round"/></svg>
+      </div>
+      <p class="brand-sub">新北市．寵物寄宿</p>
+    </div>
+    <button type="button" class="line-btn" id="lineBtn">加賴預約</button>
+  </div>
+</header>
+
+<main class="page-shell">
+  <section class="hero" id="hero" aria-label="豬仔照片"></section>
+
+  <section class="slogans" id="slogans" aria-label="標語"></section>
+
+  <section aria-label="價格方案">
+    <h2 class="sec-title hand">價格方案 <span class="cap-note">由後台設定</span></h2>
+    <div id="pricing" class="pricing"></div>
+  </section>
+
+  <section aria-label="日常記錄相簿">
+    <h2 class="sec-title hand">日常記錄相簿</h2>
+    <div id="albumList" class="album"></div>
+    <div id="folderDetail" class="folder-view" hidden>
+      <button type="button" class="back-btn" id="backToAlbum">← 返回相簿</button>
+      <h3 id="folderDetailName"></h3>
+      <div id="folderPhotoGrid" class="photo-grid"></div>
+    </div>
+  </section>
+
+  <section aria-label="歡迎留言板">
+    <h2 class="sec-title hand">歡迎留言板</h2>
+    <div class="board">
+      <form class="msg-form" id="msgForm" novalidate>
+        <div class="field">
+          <label for="msgName">暱稱 <span class="req">*</span></label>
+          <input type="text" id="msgName" name="msgName" maxlength="20" required>
+          <span class="field-error" id="msgNameError"></span>
+        </div>
+        <div class="field">
+          <label for="msgText">留言 <span class="req">*</span></label>
+          <textarea id="msgText" name="msgText" maxlength="300" required></textarea>
+          <span class="field-error" id="msgTextError"></span>
+        </div>
+        <div class="field">
+          <input type="file" id="msgPhotos" accept="image/*" multiple class="visually-hidden">
+          <label for="msgPhotos" class="btn-secondary file-picker-btn" id="msgPhotosLabel">選擇照片（最多 3 張）</label>
+          <div class="msg-photo-previews" id="msgPhotoPreviews"></div>
+          <span class="field-error" id="msgPhotosError"></span>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">送出留言</button>
+        </div>
+      </form>
+      <ul class="msg-list" id="msgList" aria-label="留言列表"></ul>
+    </div>
+  </section>
+
+  <section class="hours" aria-label="營業時間">
+    <div class="h-label hand">營業時間</div>
+    <div class="h-lines" id="hoursLines"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Demo 示意版<a href="admin.html">管理後台</a></p>
+</footer>
+
+<div class="sticky-line-bar">
+  <button type="button" class="line-btn" id="lineBtnSticky">加賴預約</button>
+</div>
+
+<dialog id="lightbox" aria-label="照片檢視">
+  <div class="lightbox-inner">
+    <img id="lightboxImg" alt="">
+    <div class="lightbox-controls">
+      <button type="button" id="lbPrev" aria-label="上一張">‹ 上一張</button>
+      <button type="button" id="lbClose">關閉</button>
+      <button type="button" id="lbNext" aria-label="下一張">下一張 ›</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="store.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

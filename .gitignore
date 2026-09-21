@@ -1,0 +1,11 @@
+*
+!.gitignore
+!.nojekyll
+!index.html
+!admin.html
+!style.css
+!store.js
+!app.js
+!admin.js
+!test.js
+!README.md

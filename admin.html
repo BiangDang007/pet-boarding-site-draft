@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>後台管理｜豬仔仔幼兒園 Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="toast-region" class="toast-region" aria-live="polite" role="status"></div>
+
+<section id="loginScreen" class="admin-login">
+  <h1 class="hand">後台登入</h1>
+  <div class="hint-box">Demo 帳號：demo　密碼：demo1234<br>Demo 登入僅展示流程；正式版由伺服器驗證帳號密碼。</div>
+  <form id="loginForm" novalidate>
+    <div class="field">
+      <label for="loginUser">帳號 <span class="req">*</span></label>
+      <input type="text" id="loginUser" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="loginPass">密碼 <span class="req">*</span></label>
+      <input type="password" id="loginPass" autocomplete="current-password" required>
+    </div>
+    <p class="login-error" id="loginError" role="alert"></p>
+    <button type="submit" class="btn-primary">登入</button>
+  </form>
+</section>
+
+<div id="appShell" class="admin-shell" hidden>
+  <nav class="admin-nav" id="adminNav" aria-label="後台選單">
+    <button type="button" data-view="bookings" class="active">預約管理</button>
+    <button type="button" data-view="customers">客戶資料</button>
+    <button type="button" data-view="fees">費用資料</button>
+    <button type="button" data-view="photos">日常記錄</button>
+    <button type="button" data-view="plans">價格方案</button>
+    <button type="button" data-view="messages">留言管理</button>
+    <button type="button" data-view="settings">網站設定</button>
+    <div class="admin-nav-bottom">
+      <div class="nb-manager"><span class="avatar"></span>管理者：游小瑀</div>
+    </div>
+    <div class="admin-nav-bottom">
+      <a href="index.html" target="_blank" rel="noopener">查看前台</a>
+      <button type="button" id="resetDemoBtn">重置 Demo 資料</button>
+      <button type="button" id="logoutBtn">登出</button>
+    </div>
+  </nav>
+
+  <main class="admin-main">
+    <section id="view-bookings" data-view-section>
+      <h2 class="view-title">預約管理</h2>
+      <div class="cal-head">
+        <div class="cal-title" id="calTitle"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--yolk)"></span>待確認</span>
+          <span><span class="sw" style="background:var(--mint)"></span>已確認</span>
+          <span><span class="sw" style="background:#d9cfc2"></span>已取消</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button type="button" class="btn-primary" id="newBookingBtn">＋ 新增預約</button>
+        <div class="cal-nav">
+          <button type="button" id="calPrev">‹ 上月</button>
+          <button type="button" id="calToday">今天</button>
+          <button type="button" id="calNext">下月 ›</button>
+        </div>
+      </div>
+      <div class="status-filter" id="bookingStatusFilter">
+        <button type="button" data-status="all" class="active">全部</button>
+        <button type="button" data-status="待確認">待確認</button>
+        <button type="button" data-status="已確認">已確認</button>
+        <button type="button" data-status="已取消">已取消</button>
+      </div>
+      <div class="cal-scroll"><div class="cal-grid" id="calGrid"></div></div>
+      <div class="day-list" id="dayList"></div>
+    </section>
+
+    <section id="view-customers" data-view-section hidden>
+      <h2 class="view-title">客戶資料</h2>
+      <div class="toolbar">
+        <input type="search" class="search-box" id="customerSearch" placeholder="搜尋姓名／電話／寵物名" aria-label="搜尋客戶">
+        <button type="button" class="btn-primary" id="newCustomerBtn">＋ 新增客戶</button>
+      </div>
+      <div class="card-grid" id="customerList"></div>
+    </section>
+
+    <section id="view-fees" data-view-section hidden>
+      <h2 class="view-title">費用資料</h2>
+      <div class="totals-row" id="feeTotals"></div>
+      <div class="toolbar">
+        <div class="status-filter" id="feeStatusFilter">
+          <button type="button" data-status="all" class="active">全部</button>
+          <button type="button" data-status="待付款">待付款</button>
+          <button type="button" data-status="已付款">已付款</button>
+          <button type="button" data-status="已取消">已取消</button>
+        </div>
+        <button type="button" class="btn-primary" id="newFeeBtn">＋ 新增費用</button>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>客戶</th><th>品項</th><th>價格</th><th>狀態</th><th>操作</th></tr></thead>
+          <tbody id="feeTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="view-photos" data-view-section hidden>
+      <h2 class="view-title">日常記錄</h2>
+      <div id="folderListView">
+        <div class="toolbar"><button type="button" class="btn-primary" id="newFolderBtn">＋ 新增資料夾</button></div>
+        <div class="card-grid" id="folderCardList"></div>
+      </div>
+      <div id="folderDetailView" hidden>
+        <button type="button" class="back-btn" id="backToFolders">← 返回資料夾</button>
+        <div class="folder-toolbar">
+          <h3 id="folderDetailTitle"></h3>
+          <button type="button" class="btn-secondary" id="renameFolderBtn">重新命名</button>
+          <label class="btn-secondary" style="cursor:pointer;">
+            上傳照片
+            <input type="file" id="photoUploadInput" accept="image/*" multiple style="display:none;">
+          </label>
+          <span class="upload-progress" id="uploadProgress" aria-live="polite"></span>
+        </div>
+        <div class="admin-photo-grid" id="adminPhotoGrid"></div>
+      </div>
+    </section>
+
+    <section id="view-plans" data-view-section hidden>
+      <h2 class="view-title">價格方案</h2>
+      <div class="toolbar"><button type="button" class="btn-primary" id="newPlanBtn">＋ 新增方案</button></div>
+      <div class="card-grid" id="planList"></div>
+    </section>
+
+    <section id="view-messages" data-view-section hidden>
+      <h2 class="view-title">留言管理</h2>
+      <div id="messageList"></div>
+    </section>
+
+    <section id="view-settings" data-view-section hidden>
+      <h2 class="view-title">網站設定</h2>
+      <form class="admin-form section-block" id="settingsForm" novalidate>
+        <div class="field"><label for="setBrand">品牌名稱 <span class="req">*</span></label><input type="text" id="setBrand" maxlength="100" required></div>
+        <div class="field"><label for="setSlogan1">標語一 <span class="req">*</span></label><input type="text" id="setSlogan1" maxlength="100" required></div>
+        <div class="field"><label for="setSlogan2">標語二 <span class="req">*</span></label><input type="text" id="setSlogan2" maxlength="100" required></div>
+        <div class="field"><label for="setSlogan3">標語三 <span class="req">*</span></label><input type="text" id="setSlogan3" maxlength="100" required></div>
+        <div class="field"><label for="setHours1">營業時間一 <span class="req">*</span></label><input type="text" id="setHours1" maxlength="100" required></div>
+        <div class="field"><label for="setHours2">營業時間二 <span class="req">*</span></label><input type="text" id="setHours2" maxlength="100" required></div>
+        <div class="field"><label for="setLine">LINE 連結</label><input type="text" id="setLine" maxlength="200" placeholder="https://line.me/... 或 https://lin.ee/..."></div>
+        <h3>首頁照片</h3>
+        <div class="hero-settings-grid" id="heroSettingsGrid"></div>
+        <div class="form-actions"><button type="submit" class="btn-primary">儲存設定</button></div>
+      </form>
+    </section>
+  </main>
+</div>
+
+<dialog id="bookingDialog" class="admin-dialog" aria-labelledby="bookingDialogTitle">
+  <div class="dialog-wrap">
+    <button type="button" class="dialog-close" data-close aria-label="關閉">✕</button>
+    <h2 id="bookingDialogTitle">新增預約</h2>
+    <form class="admin-form" id="bookingForm" novalidate>
+      <div class="field">
+        <label for="bkCustomer">客戶 <span class="req">*</span></label>
+        <select id="bkCustomer" required></select>
+      </div>
+      <button type="button" class="btn-secondary" id="qaToggle">＋ 新客戶</button>
+      <div id="quickAddCustomer" hidden>
+        <div class="field"><label for="qaName">新客戶姓名 <span class="req">*</span></label><input type="text" id="qaName" maxlength="100"></div>
+        <div class="field"><label for="qaPhone">新客戶電話</label><input type="text" id="qaPhone" maxlength="100"></div>
+        <button type="button" class="btn-secondary" id="qaConfirm">確認新增客戶</button>
+      </div>
+      <div class="field">
+        <label for="bkPlan">方案 <span class="req">*</span></label>
+        <select id="bkPlan" required></select>
+      </div>
+      <div class="field">
+        <label for="bkStart">入住日 <span class="req">*</span></label>
+        <input type="date" id="bkStart" required>
+      </div>
+      <div class="field">
+        <label for="bkEnd">退房日 <span class="req">*</span></label>
+        <input type="date" id="bkEnd" required>
+        <span class="field-error" id="bkDateError"></span>
+      </div>
+      <div class="field">
+        <label for="bkNotes">備註</label>
+        <textarea id="bkNotes" maxlength="300"></textarea>
+      </div>
+      <div class="field">
+        <label for="bkStatus">狀態 <span class="req">*</span></label>
+        <select id="bkStatus">
+          <option value="待確認">待確認</option>
+          <option value="已確認">已確認</option>
+          <option value="已取消">已取消</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">儲存</button>
+        <button type="button" class="btn-secondary" id="bkCreateFee" hidden>建立費用</button>
+        <button type="button" class="btn-danger" id="bkDelete" hidden>刪除預約</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="customerDialog" class="admin-dialog" aria-labelledby="customerDialogTitle">
+  <div class="dialog-wrap">
+    <button type="button" class="dialog-close" data-close aria-label="關閉">✕</button>
+    <h2 id="customerDialogTitle">新增客戶</h2>
+    <form class="admin-form" id="customerForm" novalidate>
+      <div class="field"><label for="cuName">姓名 <span class="req">*</span></label><input type="text" id="cuName" maxlength="100" required></div>
+      <div class="field"><label for="cuPhone">電話 <span class="req">*</span></label><input type="text" id="cuPhone" maxlength="100" required></div>
+      <div class="field"><label for="cuPet">寵物名</label><input type="text" id="cuPet" maxlength="100"></div>
+      <div class="field"><label for="cuNotes">備註</label><textarea id="cuNotes" maxlength="300"></textarea></div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">儲存</button>
+        <button type="button" class="btn-danger" id="cuDelete" hidden>刪除客戶</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="customerDetailDialog" class="admin-dialog customer-detail" aria-labelledby="custDetailTitle">
+  <div class="dialog-wrap">
+    <button type="button" class="dialog-close" data-close aria-label="關閉">✕</button>
+    <h2 id="custDetailTitle"></h2>
+    <dl id="custDetailInfo"></dl>
+    <div class="detail-section">
+      <h3>預約紀錄</h3>
+      <div id="custDetailBookings"></div>
+    </div>
+    <div class="detail-section">
+      <h3>費用紀錄</h3>
+      <div id="custDetailFees"></div>
+    </div>
+    <div class="unpaid-total" id="custDetailUnpaid"></div>
+  </div>
+</dialog>
+
+<dialog id="feeDialog" class="admin-dialog" aria-labelledby="feeDialogTitle">
+  <div class="dialog-wrap">
+    <button type="button" class="dialog-close" data-close aria-label="關閉">✕</button>
+    <h2 id="feeDialogTitle">新增費用</h2>
+    <form class="admin-form" id="feeForm" novalidate>
+      <div class="field"><label for="feCustomer">客戶 <span class="req">*</span></label><select id="feCustomer" required></select></div>
+      <div class="field"><label for="feBooking">關聯預約</label><select id="feBooking"></select></div>
+      <div class="field"><label for="feItem">品項 <span class="req">*</span></label><input type="text" id="feItem" maxlength="100" required></div>
+      <div class="field"><label for="fePrice">價格 <span class="req">*</span></label><input type="number" id="fePrice" min="0" step="1" required></div>
+      <div class="field"><label for="feNotes">備註</label><textarea id="feNotes" maxlength="300"></textarea></div>
+      <div class="field">
+        <label for="feStatus">狀態 <span class="req">*</span></label>
+        <select id="feStatus">
+          <option value="待付款">待付款</option>
+          <option value="已付款">已付款</option>
+          <option value="已取消">已取消</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">儲存</button>
+        <button type="button" class="btn-danger" id="feDelete" hidden>刪除費用</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="folderDialog" class="admin-dialog" aria-labelledby="folderDialogTitle">
+  <div class="dialog-wrap">
+    <button type="button" class="dialog-close" data-close aria-label="關閉">✕</button>
+    <h2 id="folderDialogTitle">新增資料夾</h2>
+    <form class="admin-form" id="folderForm" novalidate>
+      <div class="field"><label for="foName">資料夾名稱 <span class="req">*</span></label><input type="text" id="foName" maxlength="100" required></div>
+      <div class="form-actions"><button type="submit" class="btn-primary">儲存</button></div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="planDialog" class="admin-dialog" aria-labelledby="planDialogTitle">
+  <div class="dialog-wrap">
+    <button type="button" class="dialog-close" data-close aria-label="關閉">✕</button>
+    <h2 id="planDialogTitle">新增方案</h2>
+    <form class="admin-form" id="planForm" novalidate>
+      <div class="field"><label for="plName">名稱 <span class="req">*</span></label><input type="text" id="plName" maxlength="100" required></div>
+      <div class="field"><label for="plPrice">價格 <span class="req">*</span></label><input type="number" id="plPrice" min="0" step="1" required></div>
+      <div class="field"><label for="plDesc">說明</label><input type="text" id="plDesc" maxlength="100"></div>
+      <div class="field checkbox-field"><input type="checkbox" id="plRecommended"><label for="plRecommended">推薦方案</label></div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">儲存</button>
+        <button type="button" class="btn-danger" id="plDelete" hidden>刪除方案</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script src="store.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
